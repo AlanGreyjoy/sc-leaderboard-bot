@@ -5,6 +5,7 @@ const { getCommands } = require('./commands')
 const config = require('./config')
 const helpers = require('./utils/helpers')
 const logger = require('./utils/logger')
+const storage = require('./utils/createStorage')
 
 const BOT_TOKEN = config.BOT_TOKEN
 const GUILD_ID = config.GUILD_ID
@@ -56,6 +57,9 @@ client.on(Events.InteractionCreate, async interaction => {
 
 async function startDiscordBot() {
   logger.info('Starting Discord Bot...')
-  client.commands = await getCommands()
-  client.login(BOT_TOKEN)
+  await storage.createStorage()
+
+  logger.info('Getting commands...')
+  // client.commands = await getCommands()
+  // client.login(BOT_TOKEN)
 }
