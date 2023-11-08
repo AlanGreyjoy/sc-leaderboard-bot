@@ -60,6 +60,6 @@ async function startDiscordBot() {
   await storage.createStorage()
 
   logger.info('Getting commands...')
-  // client.commands = await getCommands()
-  // client.login(BOT_TOKEN)
+  client.commands = await getCommands()
+  client.login(BOT_TOKEN)
 }

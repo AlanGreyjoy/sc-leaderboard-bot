@@ -22,7 +22,6 @@ module.exports.createStorage = async () => {
       JSON.stringify(
         {
           orgName: '',
-          orgId: '',
           orgLogo: ''
         },
         null,

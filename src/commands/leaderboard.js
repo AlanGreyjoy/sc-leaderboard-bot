@@ -1,9 +1,5 @@
-const orgConfig = require('../storage/orgConfig.json')
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
 const logger = require('../utils/logger')
-
-const rsiLeaderboardService = require('../services/rsiLeaderboard.service')
-const { AsciiTable3, AlignmentEnum } = require('ascii-table3')
 const buttons = require('../buttons')
 const mainMenuEmbed = require('../embeds/mainMenu')
 const navigationService = require('../services/navigation')

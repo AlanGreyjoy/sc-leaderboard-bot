@@ -26,7 +26,7 @@ module.exports.getCommands = async () => {
     if ('data' in command && 'execute' in command) {
       commands.push(command.data.toJSON())
       collection.set(command.data.name, command)
-      console.log(`[INFO] Loaded command ${command.data.name} from ${filePath}`)
+      logger.info(`Loaded command ${command.data.name} from ${filePath}`)
     } else {
       console.log(
         `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
