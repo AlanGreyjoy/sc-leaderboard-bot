@@ -1,0 +1,15 @@
+{
+  "name": "sc-leaderboard-bot",
+  "version": "1.0.0",
+  "description": "A Star Citizen Leaderboard bot for discord!",
+  "main": "/src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alan Spurlock",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.13.0",
+    "prettier": "^3.0.3"
+  }
+}
