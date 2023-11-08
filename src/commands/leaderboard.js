@@ -6,6 +6,7 @@ const rsiLeaderboardService = require('../services/rsiLeaderboard.service')
 const { AsciiTable3, AlignmentEnum } = require('ascii-table3')
 const buttons = require('../buttons')
 const mainMenuEmbed = require('../embeds/mainMenu')
+const navigationService = require('../services/navigation')
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -23,56 +24,26 @@ module.exports = {
       ephemeral: true
     })
 
-    // const filter = interaction => interaction.user.id === interaction.user.id
+    const filter = interaction => interaction.user.id === interaction.user.id
 
-    // const collector = interaction.channel.createMessageComponentCollector({
-    //   filter,
-    //   time: 15000
-    // })
+    const collector = interaction.channel.createMessageComponentCollector({
+      filter,
+      time: 15000
+    })
 
-    // collector.on('collect', async interaction => {
-    //   const mapName = interaction.customId
+    collector.on('collect', async interaction => {
+      const menuOption = interaction.customId
 
-    //   logger.info(`Getting map: ${mapName}...`)
+      logger.info(`Selected menu option: ${menuOption}...`)
 
-    //   const mapRecords = await rsiLeaderboardService.getRacingMap(interaction.customId)
-
-    //   const rows = []
-
-    //   for (const record of mapRecords) {
-    //     rows.push([
-    //       record.displayname,
-    //       record.best_race,
-    //       record.best_lap
-    //       //record.matches,
-    //       //record.wins,
-    //       //record.losses,
-    //       //record.flight_time,
-    //     ])
-    //   }
-
-    //   const leaderBoardText = await generateLeaderboardASCIITable(rows, interaction.customId)
-
-    //   const embed = new EmbedBuilder()
-    //     .setTitle(`${mapName} Leaderboard`)
-    //     .setDescription(`\`\`\`${leaderBoardText}\`\`\``)
-
-    //   await interaction.reply({
-    //     embeds: [embed],
-    //     components: rowComponents,
-    //     ephemeral: true
-    //   })
-    // })
+      switch (menuOption) {
+        case 'sc-tracks':
+          await navigationService.scTracks.getTracksMenu(interaction, embed)
+          break
+        default:
+          logger.info(`Menu option ${menuOption} not found at this level...`)
+          break
+      }
+    })
   }
-}
-
-async function generateLeaderboardASCIITable(rows, mapName) {
-  const columns = ['Player', 'Fastest Race', 'Fastest Lap']
-
-  const table = new AsciiTable3(mapName)
-
-  //Create table and auto size columns
-  table.setHeading(...columns).addRowMatrix(rows)
-
-  return table.toString()
 }

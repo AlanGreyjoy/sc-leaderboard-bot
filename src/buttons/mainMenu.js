@@ -2,8 +2,8 @@ const { ButtonBuilder, ActionRowBuilder } = require('discord.js')
 
 module.exports.getMainMenu = async () => {
   const racingButton = new ButtonBuilder()
-    .setCustomId('racing')
-    .setLabel('Racing')
+    .setCustomId('racing-management')
+    .setLabel('Racing Management')
     .setStyle('Secondary')
     .setEmoji('🏎️')
 
