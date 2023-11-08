@@ -1,13 +1,7 @@
 const { ButtonBuilder, ActionRowBuilder } = require('discord.js')
-const rsiLeaderboardService = require('../../services/rsiLeaderboard.service')
+const rsiLeaderboardService = require('../services/rsiLeaderboard.service')
 
-module.exports.getRacingMenu = async () => {
-  const backButton = new ButtonBuilder()
-    .setCustomId('back')
-    .setLabel('Back')
-    .setStyle('Secondary')
-    .setEmoji('◀️')
-
+module.exports.getSCTracksMenu = async () => {
   const racingMaps = await rsiLeaderboardService.getRacingMaps()
 
   const mapButtons = []

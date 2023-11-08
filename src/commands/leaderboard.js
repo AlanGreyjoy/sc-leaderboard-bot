@@ -3,72 +3,66 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
 const logger = require('../utils/logger')
 
 const rsiLeaderboardService = require('../services/rsiLeaderboard.service')
-const racingMenus = require('../buttons/leaderboards/racing')
 const { AsciiTable3, AlignmentEnum } = require('ascii-table3')
+const buttons = require('../buttons')
+const mainMenuEmbed = require('../embeds/mainMenu')
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('leaderboard')
-    .setDescription('Manage course leaderboards'),
+    .setDescription('Manage course leaderboards and view Star Citizen stats'),
 
   async execute(interaction) {
-    const rowComponents = await racingMenus.getRacingMenu()
+    const mainMenu = await buttons.mainMenu.getMainMenu()
 
-    //Build embed
-    const embed = new EmbedBuilder()
-      .setTitle('RSI Leaderboard')
-      .setDescription('Latest racing times from RSI')
-      .setTimestamp()
-      .setImage(
-        'https://cdn.robertsspaceindustries.com/static/images/arena-commander/logo-header-racing.png'
-      )
+    const embed = mainMenuEmbed.getMainMenuEmbed()
 
     await interaction.reply({
       embeds: [embed],
-      components: rowComponents,
+      components: mainMenu,
       ephemeral: true
     })
 
-    const filter = interaction => interaction.user.id === interaction.user.id
+    // const filter = interaction => interaction.user.id === interaction.user.id
 
-    const collector = interaction.channel.createMessageComponentCollector({
-      filter,
-      time: 15000
-    })
+    // const collector = interaction.channel.createMessageComponentCollector({
+    //   filter,
+    //   time: 15000
+    // })
 
-    collector.on('collect', async interaction => {
-      const mapName = interaction.customId
+    // collector.on('collect', async interaction => {
+    //   const mapName = interaction.customId
 
-      logger.info(`Getting map: ${mapName}...`)
+    //   logger.info(`Getting map: ${mapName}...`)
 
-      const mapRecords = await rsiLeaderboardService.getRacingMap(interaction.customId)
+    //   const mapRecords = await rsiLeaderboardService.getRacingMap(interaction.customId)
 
-      const rows = []
+    //   const rows = []
 
-      for (const record of mapRecords) {
-        rows.push([
-          record.displayname,
-          record.best_race,
-          record.best_lap
-          //record.matches,
-          //record.wins,
-          //record.losses,
-          //record.flight_time,
-        ])
-      }
+    //   for (const record of mapRecords) {
+    //     rows.push([
+    //       record.displayname,
+    //       record.best_race,
+    //       record.best_lap
+    //       //record.matches,
+    //       //record.wins,
+    //       //record.losses,
+    //       //record.flight_time,
+    //     ])
+    //   }
 
-      const leaderBoardText = await generateLeaderboardASCIITable(rows, interaction.customId)
+    //   const leaderBoardText = await generateLeaderboardASCIITable(rows, interaction.customId)
 
-      const embed = new EmbedBuilder()
-        .setTitle(`${mapName} Leaderboard`)
-        .setDescription(`\`\`\`${leaderBoardText}\`\`\``)
+    //   const embed = new EmbedBuilder()
+    //     .setTitle(`${mapName} Leaderboard`)
+    //     .setDescription(`\`\`\`${leaderBoardText}\`\`\``)
 
-      await interaction.reply({
-        embeds: [embed],
-        components: rowComponents,
-        ephemeral: true
-      })
-    })
+    //   await interaction.reply({
+    //     embeds: [embed],
+    //     components: rowComponents,
+    //     ephemeral: true
+    //   })
+    // })
   }
 }
 
