@@ -1,6 +1,6 @@
 # Star Citizen Leaderboard Discord Bot
 
-This is a Discord bot that will allow you to create a leaderboard for your organization. It will automatically update the leaderboard when a member of your organization updates their profile on the RSI website.
+Initial release of the Star Citizen Leaderboard Discord Bot.
 
 ## Installation
 
@@ -11,5 +11,14 @@ npm i
 ## Usage
 
 ```bash
-npm start
+npm run dev
+```
+
+## ENV
+
+```bash
+DISCORD_BOT_TOKEN=
+GUILD_ID=
+APPLICATION_ID=
+PUBLIC_KEY=
 ```

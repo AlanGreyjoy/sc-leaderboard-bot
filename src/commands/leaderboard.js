@@ -1,12 +1,6 @@
 const orgConfig = require('../storage/orgConfig.json')
-const {
-  SlashCommandBuilder,
-  EmbedBuilder,
-  ChannelType,
-  ButtonBuilder,
-  ButtonStyle,
-  ActionRowBuilder
-} = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
+const logger = require('../utils/logger')
 
 const rsiLeaderboardService = require('../services/rsiLeaderboard.service')
 const racingMenus = require('../buttons/leaderboards/racing')
@@ -43,7 +37,10 @@ module.exports = {
     })
 
     collector.on('collect', async interaction => {
-      console.log(`[INFO] Getting map: ${interaction.customId}...`)
+      const mapName = interaction.customId
+
+      logger.info(`Getting map: ${mapName}...`)
+
       const mapRecords = await rsiLeaderboardService.getRacingMap(interaction.customId)
 
       const rows = []
@@ -63,11 +60,12 @@ module.exports = {
       const leaderBoardText = await generateLeaderboardASCIITable(rows, interaction.customId)
 
       const embed = new EmbedBuilder()
-        .setTitle('Snake Pit Leaderboard')
+        .setTitle(`${mapName} Leaderboard`)
         .setDescription(`\`\`\`${leaderBoardText}\`\`\``)
 
       await interaction.reply({
         embeds: [embed],
+        components: rowComponents,
         ephemeral: true
       })
     })
