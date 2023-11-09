@@ -1,5 +1,7 @@
 const { ButtonBuilder, ActionRowBuilder } = require('discord.js')
 const rsiLeaderboardService = require('../services/rsiLeaderboard.service')
+const orgConfig = require('../storage/orgConfig.json')
+const BaseMenu = require('../menus/baseMenu')
 
 module.exports.getSCTracksMenu = async () => {
   const racingMaps = await rsiLeaderboardService.getRacingMaps()
@@ -12,17 +14,39 @@ module.exports.getSCTracksMenu = async () => {
     )
   }
 
-  const rows = []
+  return BaseMenu(mapButtons)
+}
 
-  while (mapButtons.length > 0) {
-    rows.push(mapButtons.splice(0, 5))
+module.exports.getTrackLeaderboardMenu = async (trackName, orgName) => {
+  const mapRecords = await rsiLeaderboardService.getRacingMap(trackName, orgName)
+
+  const backButton = new ButtonBuilder().setCustomId('back').setLabel('Back').setStyle('Secondary')
+
+  const filterByOrgButton = new ButtonBuilder()
+    .setCustomId(`filter-by-org,${trackName}`)
+    .setLabel('Filter by Org')
+    .setStyle('Primary')
+    .setDisabled(!orgConfig.orgName)
+
+  return {
+    mapRecords,
+    buttons: [new ActionRowBuilder().addComponents(backButton, filterByOrgButton)]
   }
+}
 
-  const actionRows = []
+module.exports.getFilteredTrackLeaderboardMenu = async (trackName, orgName) => {
+  const mapRecords = await rsiLeaderboardService.getRacingMap(trackName, orgName)
 
-  for (const row of rows) {
-    actionRows.push(new ActionRowBuilder().addComponents(row))
+  const backButton = new ButtonBuilder().setCustomId('back').setLabel('Back').setStyle('Secondary')
+
+  const filterByGlobal = new ButtonBuilder()
+    .setCustomId(`filter-by-global`)
+    .setLabel('Global')
+    .setStyle('Primary')
+    .setDisabled(!orgConfig.orgName)
+
+  return {
+    mapRecords,
+    buttons: [new ActionRowBuilder().addComponents(backButton, filterByGlobal)]
   }
-
-  return actionRows
 }

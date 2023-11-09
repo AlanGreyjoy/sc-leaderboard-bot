@@ -4,7 +4,7 @@
  * This file will automatically load all commands from the commands folder that end with .js
  */
 
-const { Collection, REST, Routes } = require('discord.js')
+const { Collection, REST, Routes, DefaultRestOptions } = require('discord.js')
 const fs = require('fs')
 const path = require('path')
 const config = require('../config')
@@ -34,25 +34,26 @@ module.exports.getCommands = async () => {
     }
   }
 
-  const rest = new REST().setToken(config.BOT_TOKEN)
+  const rest = new REST({ timeout: 6000 }).setToken(config.BOT_TOKEN)
 
-  // Delete all commands before reloading+
-  // console.log(`[INFO] Started deleting ${commands.length} slash (/) commands.`)
-  // await rest.put(Routes.applicationGuildCommands(config.APPLICATION_ID, config.GUILD_ID), {
-  //   body: [],
-  // })
+  logger.info(`Loading ${commands.length} slash (/) commands.`)
 
-  logger.info(`Started reloading ${commands.length} slash (/) commands.`)
-
-  const data = await rest
+  rest
     .put(Routes.applicationGuildCommands(config.APPLICATION_ID, config.GUILD_ID), {
       body: commands
     })
+    .then(data => {
+      logger.info(`Successfully loaded ${commands.length} slash (/) commands.`)
+    })
     .catch(error => {
-      throw new Error(error)
+      if (error.code === 504) {
+        logger.error('Request timed out.')
+      } else {
+        logger.error(`An error occurred: ${error.message}`)
+      }
     })
 
-  logger.info(`Successfully reloaded ${data.length} slash (/) commands.`)
+  logger.info(`Successfully loaded ${commands.length} slash (/) commands.`)
 
   return collection
 }

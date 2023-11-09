@@ -1,4 +1,5 @@
 const axios = require('axios')
+const logger = require('../utils/logger')
 
 const baseUrl = 'https://robertsspaceindustries.com/api/leaderboards'
 
@@ -26,15 +27,40 @@ module.exports.getRacingMaps = async () => {
   })
 }
 
-module.exports.getRacingMap = async mapName => {
-  const response = await axios.post(`${baseUrl}/${endpoints.GET_LEADERBOARD}`, {
+/**
+ * Get the leaderboard for the given map
+ * @param {*} mapName
+ * @param {*} args
+ * @returns
+ */
+module.exports.getRacingMap = async (mapName, args) => {
+  logger.info(`Getting leaderboard for ${mapName}...`)
+  logger.info(`Args: ${JSON.stringify(args)}`)
+
+  const options = {
     mode: 'CR',
     map: mapName,
-    type: 'Account',
     season: '42',
     page: 1,
-    pagesize: '25'
-  })
+    pagesize: '25',
+    sort: 'rank_scre'
+  }
+
+  const { orgName, topPlayers, topOrgs } = args
+
+  if (orgName) {
+    options.org = orgName
+  }
+
+  if (topPlayers) {
+    options.type = 'Account'
+  }
+
+  if (topOrgs) {
+    options.type = 'Org'
+  }
+
+  const response = await axios.post(`${baseUrl}/${endpoints.GET_LEADERBOARD}`, options)
 
   return response.data.data.resultset
 }

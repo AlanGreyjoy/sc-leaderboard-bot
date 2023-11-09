@@ -1,0 +1,73 @@
+const { ButtonBuilder, ActionRowBuilder } = require('discord.js')
+const mainMenuEmbed = require('../embeds/mainMenu')
+const logger = require('../utils/logger')
+const menus = require('../menus')
+
+/**
+ * Show the main menu
+ * @param interaction
+ * @param replay
+ * @returns
+ */
+module.exports.show = async (interaction, replay) => {
+  const racingButton = new ButtonBuilder()
+    .setCustomId('racing-management')
+    .setLabel('Racing Management')
+    .setStyle('Secondary')
+    .setEmoji('🏎️')
+
+  const scTracksButton = new ButtonBuilder()
+    .setCustomId('rsi-leaderboards')
+    .setLabel('RSI Leaderboards')
+    .setStyle('Secondary')
+    .setEmoji('🚀')
+
+  const row = [racingButton, scTracksButton]
+
+  const actionRows = [new ActionRowBuilder().addComponents(row)]
+
+  const embed = mainMenuEmbed.getMainMenuEmbed()
+
+  let response = null
+
+  if (replay) {
+    response = await interaction.udpate({
+      embeds: [embed],
+      components: actionRows,
+      ephemeral: true
+    })
+  } else {
+    response = await interaction.reply({
+      embeds: [embed],
+      components: actionRows,
+      ephemeral: true
+    })
+  }
+
+  const collectorFilter = i => i.user.id === interaction.user.id
+
+  const confirmation = await response
+    .awaitMessageComponent({
+      filter: collectorFilter,
+      time: 60_000
+    })
+    .catch(error => {
+      logger.error(error)
+    })
+
+  const menuChoice = confirmation.customId
+
+  logger.info(`Selected main menu option: ${menuChoice}...`)
+
+  switch (menuChoice) {
+    case 'rsi-leaderboards':
+      await menus.rsiLeaderboardsMenu.show(confirmation)
+      break
+    case 'racing-management':
+      await navigationService.racingManagement.getRaceManagementMenu(confirmation)
+      break
+    default:
+      logger.info(`Menu option ${menuOption} not found at this level...`)
+      break
+  }
+}
